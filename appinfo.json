@@ -1,0 +1,19 @@
+{
+  "uuid": "297caf28-98a0-4e5b-b2f1-42034a83cc72",
+  "shortName": "pixel",
+  "longName": "pixel",
+  "companyName": "corefault",
+  "versionCode": 1,
+  "versionLabel": "1.0",
+  "sdkVersion": "3",
+  "targetPlatforms": ["basalt"],
+  "watchapp": {
+    "watchface": true
+  },
+  "appKeys": {
+    "dummy": 0
+  },
+  "resources": {
+    "media": []
+  }
+}
