@@ -4,13 +4,19 @@ static Window 		*window;
 static TextLayer 	*text_time;
 static Layer      *seconds_layer;
 
-#define COLUMNS 6
-#define ROWS    10
+#define COLUMNS  6
+#define ROWS     10
 #define BLOCK_X  24
-#define BLOCK_Y  16
 #define MARGIN   1
 
-#define THEME_LIMIT   5
+#ifdef PBL_COLOR
+   #define BLOCK_Y  16
+   #define THEME_LIMIT   5
+#else
+   #define BLOCK_Y  11
+   #define THEME_LIMIT   1
+#endif
+
 GColor     theme_red[THEME_LIMIT];
 
 /**
@@ -33,10 +39,11 @@ static unsigned short get_display_hour(unsigned short hour ,char* ampm) {
 static void draw_text(GContext* ctx, int hour, int min) {
    char    buffer[10];
    char    ampm[3] = {0};
-
+   
    graphics_context_set_text_color(ctx, GColorWhite);
    
    hour = get_display_hour(hour, ampm);
+#ifdef PBL_COLOR
    if (strlen(ampm) > 0) {
       graphics_draw_text(ctx, ampm, fonts_get_system_font(FONT_KEY_GOTHIC_14),GRect(0,17,144,14), GTextOverflowModeFill, GTextAlignmentCenter, NULL);   
    } 
@@ -44,6 +51,13 @@ static void draw_text(GContext* ctx, int hour, int min) {
    graphics_draw_text(ctx, buffer, fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD),GRect(0,32,144,44), GTextOverflowModeFill, GTextAlignmentCenter, NULL);   
    snprintf (buffer, sizeof(buffer), "%d", min);
    graphics_draw_text(ctx, buffer, fonts_get_system_font(FONT_KEY_BITHAM_42_LIGHT),GRect(0,77,144,44), GTextOverflowModeFill, GTextAlignmentCenter, NULL);   
+#else
+   if (strlen(ampm) > 0) {
+      graphics_draw_text(ctx, ampm, fonts_get_system_font(FONT_KEY_GOTHIC_14),GRect(0,115,144,14), GTextOverflowModeFill, GTextAlignmentCenter, NULL);   
+   } 
+   snprintf (buffer, sizeof(buffer), "%d:%02d", hour, min);
+   graphics_draw_text(ctx, buffer, fonts_get_system_font(FONT_KEY_BITHAM_42_LIGHT),GRect(0,124,144,44), GTextOverflowModeFill, GTextAlignmentCenter, NULL);      
+#endif
 }
 
 /**
@@ -108,11 +122,15 @@ static void handle_time_tick(struct tm *tick_time, TimeUnits units_changed) {
  * init application 
  */
 static void init(void) {
+#ifdef PBL_COLOR
   theme_red[0] = GColorJazzberryJam;
   theme_red[1] = GColorBulgarianRose;
   theme_red[2] = GColorDarkCandyAppleRed;
   theme_red[3] = GColorFolly;
   theme_red[4] = GColorSunsetOrange;
+#else 
+  theme_red[0] = GColorWhite;
+#endif
   
   window = window_create();
   window_stack_push(window, true);
